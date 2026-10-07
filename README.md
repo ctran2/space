@@ -4,6 +4,12 @@ A classic Space Invaders clone in plain HTML, CSS and JavaScript. It works on de
 
 Shoot down the alien swarm before it reaches you. Each cleared wave starts a faster, more aggressive level. Hide behind the shields, which wear down as they take hits. You have 3 lives.
 
+## Play online
+
+**https://ctran2.github.io/space/**
+
+On a phone, you can install it as an app. In Safari, tap Share and choose "Add to Home Screen". In Chrome, open the menu and choose "Install app".
+
 ## How to play
 
 | Action | Keyboard | Touch |
