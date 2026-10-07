@@ -1,0 +1,153 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  overscroll-behavior: none;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background: #05050f;
+  color: #e0e0e0;
+  font-family: "Courier New", monospace;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+#app {
+  display: grid;
+  grid-template-areas:
+    "hud hud"
+    "game game"
+    "move fire";
+  gap: 8px;
+  justify-content: center;
+}
+
+#hud {
+  grid-area: hud;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 12px;
+  font-size: 18px;
+}
+
+#hud b {
+  color: #4cff6a;
+}
+
+canvas {
+  grid-area: game;
+  width: min(calc(100vw - 16px), 640px, calc((100dvh - 90px) * 4 / 3));
+  height: auto;
+  background: #000;
+  border: 2px solid #333;
+  image-rendering: pixelated;
+  touch-action: none;
+}
+
+button {
+  font: inherit;
+  color: #4cff6a;
+  background: #111a14;
+  border: 2px solid #4cff6a;
+  border-radius: 8px;
+  touch-action: none;
+  cursor: pointer;
+}
+
+button.small {
+  padding: 2px 8px;
+  font-size: 14px;
+}
+
+.pad {
+  display: none;
+  gap: 12px;
+}
+
+#move-pad {
+  grid-area: move;
+}
+
+#fire-pad {
+  grid-area: fire;
+  justify-content: flex-end;
+}
+
+.pad button {
+  width: 80px;
+  height: 80px;
+}
+
+.pad button.active {
+  background: #4cff6a;
+  color: #000;
+}
+
+.pad svg {
+  width: 32px;
+  height: 32px;
+  fill: currentColor;
+}
+
+#fire-btn {
+  width: 110px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#help {
+  color: #777;
+  font-size: 14px;
+}
+
+/* Touch devices: show on-screen controls, hide keyboard help */
+@media (pointer: coarse) {
+  .pad {
+    display: flex;
+  }
+
+  #help {
+    display: none;
+  }
+
+  #hud {
+    font-size: 14px;
+    gap: 4px 8px;
+  }
+
+  canvas {
+    width: min(calc(100vw - 16px), 640px, calc((100dvh - 150px) * 4 / 3));
+  }
+}
+
+/* Landscape touch: controls on either side of the game */
+@media (pointer: coarse) and (orientation: landscape) {
+  #app {
+    grid-template-areas:
+      "move hud fire"
+      "move game fire";
+    align-items: center;
+  }
+
+  #move-pad {
+    flex-direction: column;
+  }
+
+  canvas {
+    width: min(calc(100vw - 280px), 640px, calc((100dvh - 60px) * 4 / 3));
+  }
+}

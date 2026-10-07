@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#05050f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Invaders">
+  <title>Space Invaders</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="app">
+    <div id="hud">
+      <span>Score: <b id="score">0</b></span>
+      <span>Level: <b id="level">1</b></span>
+      <span>Lives: <b id="lives">3</b></span>
+      <button id="pause-btn" class="small">Pause</button>
+      <button id="mute-btn" class="small">Mute</button>
+    </div>
+    <canvas id="game" width="640" height="480"></canvas>
+    <div id="move-pad" class="pad">
+      <button data-key="ArrowLeft" aria-label="Move left">
+        <svg viewBox="0 0 10 10"><polygon points="8,1 8,9 1,5" /></svg>
+      </button>
+      <button data-key="ArrowRight" aria-label="Move right">
+        <svg viewBox="0 0 10 10"><polygon points="2,1 2,9 9,5" /></svg>
+      </button>
+    </div>
+    <div id="fire-pad" class="pad">
+      <button data-key="Space" id="fire-btn">FIRE</button>
+    </div>
+  </main>
+  <p id="help">Left/Right or A/D to move, Space to shoot, P to pause, M to mute</p>
+  <script src="sound.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
