@@ -4,6 +4,8 @@ A classic Space Invaders clone in plain HTML, CSS and JavaScript. It works on de
 
 Shoot down the alien swarm before it reaches you. Each cleared wave starts a faster, more aggressive level. Hide behind the shields, which wear down as they take hits. You have 3 lives.
 
+For young kids, the game cheers with simple English words out loud, like "Nice shot!", "Great job!" and "Level two!".
+
 ## Play online
 
 **https://ctran2.github.io/space/**

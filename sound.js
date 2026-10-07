@@ -7,8 +7,30 @@ const Sound = (() => {
 
   // Browsers only allow audio after a user gesture, so call this from a key handler.
   function init() {
-    if (!ctx) ctx = new AudioContext();
+    if (!ctx) {
+      ctx = new AudioContext();
+      say(""); // iOS only allows speech after it is first used inside a user gesture
+    }
     if (ctx.state !== "running") ctx.resume(); // "suspended", or "interrupted" on iOS
+  }
+
+  // Speak a word with the browser's built-in voice. Without `interrupt`,
+  // the word is skipped if something is still being said, so words never pile up.
+  function say(text, { interrupt = false } = {}) {
+    if (!("speechSynthesis" in window) || muted) return;
+    if (speechSynthesis.speaking) {
+      if (!interrupt) return;
+      speechSynthesis.cancel();
+    }
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US";
+    u.rate = 0.85;
+    u.pitch = 1.2;
+    speechSynthesis.speak(u);
+  }
+
+  function stopSpeech() {
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
   }
 
   function tone(freq, dur, { type = "square", vol = 0.1, endFreq = freq, delay = 0 } = {}) {
@@ -47,8 +69,11 @@ const Sound = (() => {
 
   return {
     init,
+    say,
+    stopSpeech,
     toggleMute() {
       muted = !muted;
+      if (muted) stopSpeech();
       return muted;
     },
     shoot: () => tone(880, 0.12, { vol: 0.05, endFreq: 220 }),

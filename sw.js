@@ -1,10 +1,11 @@
 // Offline support: serve from cache, refresh the cache in the background.
-const CACHE = "space-invaders-v1";
+const CACHE = "space-invaders-v2";
 const FILES = [
   "./",
   "style.css",
   "game.js",
   "sound.js",
+  "words.js",
   "manifest.webmanifest",
   "icon-192.png",
   "icon-512.png",

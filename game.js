@@ -18,7 +18,7 @@ const ROW_COLORS = ["#ff4c8b", "#ffd84c", "#ffd84c", "#4cc9ff", "#4cc9ff"];
 
 const keys = {};
 let state = "start"; // start | playing | paused | over
-let player, bullets, enemyBullets, aliens, shields;
+let player, bullets, enemyBullets, aliens, shields, popups;
 let alienDir, alienSpeed, alienShootChance, score, level, lives, lastTime, frame, marchTimer;
 
 function newGame() {
@@ -27,12 +27,14 @@ function newGame() {
   lives = 3;
   setupLevel();
   state = "playing";
+  Sound.say(Words.levelIntro(level), { interrupt: true });
 }
 
 function setupLevel() {
   player = { x: W / 2 - 20, y: H - 40, w: 40, h: 16, speed: 300, cooldown: 0, flash: 0 };
   bullets = [];
   enemyBullets = [];
+  popups = [];
   aliens = [];
   for (let r = 0; r < ROWS; r++) {
     for (let c = 0; c < COLS; c++) {
@@ -102,14 +104,28 @@ function update(dt) {
     if (b.y + b.h < 0 || hitShield(b)) return false;
     const i = aliens.findIndex((a) => hit(b, a));
     if (i !== -1) {
-      score += ROW_POINTS[aliens[i].row];
+      const a = aliens[i];
+      score += ROW_POINTS[a.row];
       aliens.splice(i, 1);
       Sound.alienHit();
+      // Cheer now and then, not on every hit
+      if (Math.random() < 0.25) {
+        const word = Words.shout("alien");
+        popups.push({ text: word, x: a.x + a.w / 2, y: a.y, life: 1.2 });
+        Sound.say(word);
+      }
       updateHud();
       return false;
     }
     return true;
   });
+
+  // Floating words drift up and fade
+  for (const p of popups) {
+    p.y -= 40 * dt;
+    p.life -= dt;
+  }
+  popups = popups.filter((p) => p.life > 0);
 
   // Alien movement: speed up as the swarm shrinks
   const speed = alienSpeed * (1 + (ROWS * COLS - aliens.length) / 15);
@@ -164,6 +180,7 @@ function update(dt) {
       updateHud();
       state = "over";
       Sound.gameOver();
+      Sound.say(Words.shout("over"), { interrupt: true });
       return;
     }
   }
@@ -173,6 +190,7 @@ function update(dt) {
     level++;
     Sound.levelUp();
     setupLevel();
+    Sound.say(`${Words.shout("cleared")} ${Words.levelIntro(level)}`, { interrupt: true });
   }
 }
 
@@ -184,8 +202,10 @@ function loseLife() {
   if (lives <= 0) {
     state = "over";
     Sound.gameOver();
+    Sound.say(Words.shout("over"), { interrupt: true });
   } else {
     Sound.playerHit();
+    Sound.say(Words.shout("hit"), { interrupt: true });
   }
 }
 
@@ -243,6 +263,12 @@ function draw() {
     for (const b of enemyBullets) ctx.fillRect(b.x, b.y, b.w, b.h);
     ctx.fillStyle = "#4cff6a";
     ctx.fillRect(0, H - 14, W, 2);
+    ctx.textAlign = "center";
+    ctx.font = 'bold 28px "Courier New", monospace';
+    for (const p of popups) {
+      ctx.fillStyle = `rgba(255,255,255,${Math.min(1, p.life)})`;
+      ctx.fillText(p.text, p.x, p.y);
+    }
   }
 
   if (state === "start") drawText([["SPACE INVADERS", 40], ["Press Enter or tap to start", 20]]);
@@ -262,6 +288,7 @@ function loop(time) {
 const muteBtn = document.getElementById("mute-btn");
 
 function togglePause() {
+  Sound.stopSpeech();
   if (state === "playing") state = "paused";
   else if (state === "paused") state = "playing";
 }
@@ -316,7 +343,10 @@ document.addEventListener("click", Sound.init);
 
 // Auto-pause when the app is switched away from
 document.addEventListener("visibilitychange", () => {
-  if (document.hidden && state === "playing") state = "paused";
+  if (document.hidden && state === "playing") {
+    state = "paused";
+    Sound.stopSpeech();
+  }
 });
 
 // Offline support (service workers don't run from file://)
